@@ -1,0 +1,22 @@
+app:
+  jwt:
+    secret: test-secret-key-for-junit-tests-only-min-32-chars
+    expiration-ms: 3600000
+  cors:
+    allowed-origins: http://localhost:3000
+  openai:
+    api-key: test-key
+    model: gpt-4o-mini
+    base-url: https://api.openai.com/v1
+
+spring:
+  mongodb:
+    embedded:
+      version: 7.0.14
+
+# Flapdoodle embedded Mongo version property (required by some embed-mongo autoconfigs)
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 7.0.14

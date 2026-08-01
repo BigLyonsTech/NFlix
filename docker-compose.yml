@@ -1,0 +1,29 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: netflix-clone-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    container_name: netflix-clone-backend
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    ports:
+      - "8080:8080"
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/netflixclone
+      JWT_SECRET: ${JWT_SECRET:-change-this-super-secret-key-in-production-min-32-chars}
+      JWT_EXPIRATION_MS: 86400000
+      CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+
+volumes:
+  mongo-data:
