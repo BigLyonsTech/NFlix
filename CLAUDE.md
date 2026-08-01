@@ -49,10 +49,12 @@ Seeded admin login (auto-created by `DataSeeder` on first backend boot):
 CI: `.github/workflows/ci.yml` runs `mvn test` + `mvn package` (backend) and
 `npm run lint` + `npm run build` (frontend) on every push/PR, as two parallel
 jobs on `ubuntu-latest`. It assumes **`netflix-clone/` is the git repo root**
-(job `working-directory` is `backend`/`frontend`, not `netflix-clone/backend`)
-— this repo had no `.git` and no `git` CLI installed as of 2026-07-30, so the
-workflow has never actually run. If you restructure the repo root, update the
-`working-directory` values accordingly.
+(job `working-directory` is `backend`/`frontend`, not `netflix-clone/backend`).
+This repo had no `.git` and no `git` CLI installed as of 2026-07-30, so the
+workflow had never run — **fixed 2026-08-01**: repo is now on GitHub at
+`github.com/BigLyonsTech/NFlix`, and the first CI run on `main` passed (both
+jobs green). If you restructure the repo root, update the `working-directory`
+values accordingly.
 
 ## Known issues (verified 2026-07-30, resolved same day)
 
