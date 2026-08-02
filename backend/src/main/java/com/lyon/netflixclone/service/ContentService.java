@@ -47,6 +47,7 @@ public class ContentService {
                 .description(request.description())
                 .thumbnailUrl(request.thumbnailUrl())
                 .backgroundUrl(request.backgroundUrl())
+                .videoUrl(request.videoUrl())
                 .year(request.year())
                 .ageRating(request.ageRating())
                 .duration(request.duration())
@@ -67,6 +68,7 @@ public class ContentService {
         content.setDescription(request.description());
         content.setThumbnailUrl(request.thumbnailUrl());
         content.setBackgroundUrl(request.backgroundUrl());
+        content.setVideoUrl(request.videoUrl());
         content.setYear(request.year());
         content.setAgeRating(request.ageRating());
         content.setDuration(request.duration());
@@ -91,6 +93,7 @@ public class ContentService {
                 c.getTitle(),
                 c.getThumbnailUrl(),
                 c.getBackgroundUrl(),
+                c.getVideoUrl(),
                 c.getDescription(),
                 c.getYear(),
                 c.getAgeRating(),

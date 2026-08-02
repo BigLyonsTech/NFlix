@@ -29,6 +29,8 @@ public class Content {
 
     private String backgroundUrl;
 
+    private String videoUrl;
+
     private String year;
 
     private String ageRating;

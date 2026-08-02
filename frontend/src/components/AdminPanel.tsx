@@ -13,6 +13,7 @@ const emptyForm: ContentPayload = {
   description: '',
   thumbnailUrl: '',
   backgroundUrl: '',
+  videoUrl: '',
   year: '',
   ageRating: '',
   duration: '',
@@ -59,6 +60,7 @@ export function AdminPanel({ onBack }: AdminPanelProps) {
       description: movie.description || '',
       thumbnailUrl: movie.thumbnailUrl,
       backgroundUrl: movie.backgroundUrl || '',
+      videoUrl: movie.videoUrl || '',
       year: movie.year || '',
       ageRating: movie.ageRating || '',
       duration: movie.duration || '',
@@ -204,6 +206,10 @@ export function AdminPanel({ onBack }: AdminPanelProps) {
 
               <input placeholder="Background image URL (for hero/immersive view)" value={form.backgroundUrl}
                 onChange={(e) => setForm({ ...form, backgroundUrl: e.target.value })}
+                className="bg-white/5 border border-white/10 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-red-500" />
+
+              <input placeholder="Video URL (mp4 - leave blank to use a sample clip)" value={form.videoUrl}
+                onChange={(e) => setForm({ ...form, videoUrl: e.target.value })}
                 className="bg-white/5 border border-white/10 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-red-500" />
 
               <div className="grid grid-cols-2 gap-3">

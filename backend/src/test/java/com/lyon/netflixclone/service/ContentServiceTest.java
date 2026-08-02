@@ -69,7 +69,7 @@ class ContentServiceTest {
     @Test
     void create_savesAndReturnsMappedContent() {
         ContentRequest request = new ContentRequest(
-                "Dune", "A sci-fi epic", "https://example.com/dune.jpg", null,
+                "Dune", "A sci-fi epic", "https://example.com/dune.jpg", null, null,
                 "2021", "U/A 13+", "2h 35m", null, List.of("Sci-Fi"), 5, "HERO"
         );
 

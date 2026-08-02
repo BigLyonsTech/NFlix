@@ -11,6 +11,7 @@ export interface Movie {
   progress?: number;
   description?: string;
   backgroundUrl?: string;
+  videoUrl?: string;
   rating?: number;
   category?: 'NEW_TRAILER' | 'POPCORN_MANIA' | 'HERO';
 }

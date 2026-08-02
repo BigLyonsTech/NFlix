@@ -6,6 +6,7 @@ export interface ContentPayload {
   description?: string;
   thumbnailUrl: string;
   backgroundUrl?: string;
+  videoUrl?: string;
   year?: string;
   ageRating?: string;
   duration?: string;

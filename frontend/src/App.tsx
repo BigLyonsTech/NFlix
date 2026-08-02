@@ -179,7 +179,7 @@ export default function App() {
                 transition={{ duration: 0.4, ease: "easeInOut" }}
                 className="w-full h-full"
               >
-                <WatchPanel movie={activeMovieToWatch} onBack={() => setActiveTab('home')} />
+                <WatchPanel movie={activeMovieToWatch} authed={authed} onBack={() => setActiveTab('home')} />
               </motion.div>
             ) : activeTab === 'admin' ? (
               <motion.div
