@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 import { Movie } from '../types';
 import { fetchContent, searchContent } from '../api/contentApi';
 
 interface SearchPanelProps {
-  onClose?: () => void;
   navigateToWatch?: (movie: Movie) => void;
 }
 
-export function SearchPanel({ onClose, navigateToWatch }: SearchPanelProps) {
+export function SearchPanel({ navigateToWatch }: SearchPanelProps) {
+  const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,11 +40,9 @@ export function SearchPanel({ onClose, navigateToWatch }: SearchPanelProps) {
 
   return (
     <div className="w-full h-full bg-[#141414] text-white flex flex-col p-4 sm:p-8 md:p-12 relative overflow-hidden rounded-3xl md:rounded-[2.5rem]">
-      {onClose && (
-        <button onClick={onClose} className="absolute top-4 right-4 sm:top-8 sm:right-8 text-zinc-400 hover:text-white transition z-10">
-          <X className="w-6 h-6 sm:w-8 sm:h-8" />
-        </button>
-      )}
+      <button onClick={() => navigate('/')} className="absolute top-4 right-4 sm:top-8 sm:right-8 text-zinc-400 hover:text-white transition z-10">
+        <X className="w-6 h-6 sm:w-8 sm:h-8" />
+      </button>
 
       {/* Top Section: Search Input */}
       <div className="flex flex-col items-center mb-6 sm:mb-10 shrink-0 mt-8 sm:mt-4">

@@ -1,14 +1,14 @@
 import { ChevronLeft, ChevronRight, Mic, Bell, Search, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { getCurrentUser } from '../api/authApi';
 
 interface TopBarProps {
-  navigateToAuth?: (isLogin: boolean) => void;
-  navigateToSearch?: () => void;
   authed?: boolean;
   onSignOut?: () => void;
 }
 
-export function TopBar({ navigateToAuth, navigateToSearch, authed, onSignOut }: TopBarProps) {
+export function TopBar({ authed, onSignOut }: TopBarProps) {
+  const navigate = useNavigate();
   const user = authed ? getCurrentUser() : null;
 
   return (
@@ -24,7 +24,7 @@ export function TopBar({ navigateToAuth, navigateToSearch, authed, onSignOut }: 
           <ChevronRight className="w-5 h-5" />
         </button>
         
-        <div className="relative ml-0 md:ml-4 flex-1 max-w-sm cursor-pointer" onClick={() => navigateToSearch?.()}>
+        <div className="relative ml-0 md:ml-4 flex-1 max-w-sm cursor-pointer" onClick={() => navigate('/search')}>
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <Search className="w-4 h-4 text-zinc-500" />
           </div>
@@ -61,10 +61,10 @@ export function TopBar({ navigateToAuth, navigateToSearch, authed, onSignOut }: 
           </div>
         ) : (
           <div className="flex items-center gap-2 shrink-0">
-            <button onClick={() => navigateToAuth?.(true)} className="text-xs sm:text-sm font-medium text-white hover:text-zinc-300 transition px-2 sm:px-3 py-2 hidden sm:block">
+            <button onClick={() => navigate('/login')} className="text-xs sm:text-sm font-medium text-white hover:text-zinc-300 transition px-2 sm:px-3 py-2 hidden sm:block">
               Log In
             </button>
-            <button onClick={() => navigateToAuth?.(false)} className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium px-4 sm:px-5 py-1.5 sm:py-2 rounded-full transition shadow-lg shadow-red-600/30">
+            <button onClick={() => navigate('/signup')} className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium px-4 sm:px-5 py-1.5 sm:py-2 rounded-full transition shadow-lg shadow-red-600/30">
               Sign Up
             </button>
           </div>

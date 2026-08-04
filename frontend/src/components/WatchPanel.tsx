@@ -1,12 +1,12 @@
 import { ArrowLeft, Play, Pause, Volume2, VolumeX, Maximize, SkipForward, Settings, Check } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Movie } from '../types';
-import { updateProgress } from '../api/watchlistApi';
+import { updateProgress, fetchContinueWatching } from '../api/watchlistApi';
+import { fetchContentById } from '../api/contentApi';
 
 interface WatchPanelProps {
-  movie: Movie | null;
   authed: boolean;
-  onBack: () => void;
 }
 
 const FALLBACK_VIDEO_URL = 'https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4';
@@ -23,7 +23,35 @@ function formatTime(seconds: number): string {
   return hours > 0 ? `${hours}:${minutes.toString().padStart(2, '0')}:${paddedSecs}` : `${minutes}:${paddedSecs}`;
 }
 
-export function WatchPanel({ movie, authed, onBack }: WatchPanelProps) {
+export function WatchPanel({ authed }: WatchPanelProps) {
+  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [movie, setMovie] = useState<Movie | null>((location.state as { movie?: Movie } | null)?.movie ?? null);
+  const [isLoadingMovie, setIsLoadingMovie] = useState(!movie);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    if (movie && movie.id === id) return;
+    if (!id) return;
+
+    setIsLoadingMovie(true);
+    setLoadError(false);
+
+    Promise.all([
+      fetchContentById(id),
+      authed ? fetchContinueWatching().catch(() => []) : Promise.resolve([]),
+    ])
+      .then(([content, continueWatching]) => {
+        const progressEntry = continueWatching.find((m) => m.id === id);
+        setMovie({ ...content, progress: progressEntry?.progress });
+      })
+      .catch(() => setLoadError(true))
+      .finally(() => setIsLoadingMovie(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
@@ -145,7 +173,7 @@ export function WatchPanel({ movie, authed, onBack }: WatchPanelProps) {
     if (video && video.duration > 0) {
       saveProgress((video.currentTime / video.duration) * 100);
     }
-    onBack();
+    navigate('/');
   };
 
   const handleFullscreen = () => {
@@ -163,6 +191,22 @@ export function WatchPanel({ movie, authed, onBack }: WatchPanelProps) {
   };
 
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  if (loadError) {
+    return (
+      <div className="w-full h-full bg-black flex flex-col items-center justify-center gap-4 text-center px-6">
+        <h2 className="text-white text-xl font-bold">Couldn't find that title</h2>
+        <p className="text-zinc-400 text-sm">It may have been removed from the catalog.</p>
+        <button onClick={() => navigate('/')} className="bg-red-600 hover:bg-red-700 transition text-white font-bold px-6 py-2.5 rounded-full text-sm">
+          Back to Home
+        </button>
+      </div>
+    );
+  }
+
+  if (isLoadingMovie || !movie) {
+    return <div className="w-full h-full bg-black animate-pulse" />;
+  }
 
   return (
     <div

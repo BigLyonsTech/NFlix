@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { Movie } from '../types';
 import { fetchContent } from '../api/contentApi';
 import { createContent, deleteContent, updateContent, ContentPayload } from '../api/adminApi';
 import { getErrorMessage } from '../api/errorMessage';
-
-interface AdminPanelProps {
-  onBack: () => void;
-}
 
 const emptyForm: ContentPayload = {
   title: '',
@@ -24,7 +21,8 @@ const emptyForm: ContentPayload = {
   category: 'POPCORN_MANIA',
 };
 
-export function AdminPanel({ onBack }: AdminPanelProps) {
+export function AdminPanel() {
+  const navigate = useNavigate();
   const [items, setItems] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -114,7 +112,7 @@ export function AdminPanel({ onBack }: AdminPanelProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-6 sm:mb-8 shrink-0">
         <div className="flex items-center gap-3 sm:gap-4">
-          <button onClick={onBack} className="p-2 rounded-full hover:bg-white/10 transition">
+          <button onClick={() => navigate('/')} className="p-2 rounded-full hover:bg-white/10 transition">
             <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
           <h1 className="text-xl sm:text-2xl font-bold">Admin — Content Catalog</h1>

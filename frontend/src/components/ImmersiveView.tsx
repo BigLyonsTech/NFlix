@@ -1,72 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Star, Bell, LogOut } from 'lucide-react';
 import { Movie } from '../types';
 import { getCurrentUser } from '../api/authApi';
-
-const movies = [
-  {
-    id: '1',
-    title: 'Pirates of the Caribbean',
-    genres: ['Action', 'Adventure'],
-    duration: '2h 23m',
-    year: '2003',
-    rating: 4,
-    backgroundUrl: 'https://images.unsplash.com/photo-1541569805364-f6b0f15c1e55?auto=format&fit=crop&w=2560&q=80',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1541569805364-f6b0f15c1e55?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: '2',
-    title: 'Dune',
-    genres: ['Sci-Fi', 'Adventure'],
-    duration: '2h 35m',
-    year: '2021',
-    rating: 5,
-    backgroundUrl: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?auto=format&fit=crop&w=2560&q=80',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: '3',
-    title: 'The Batman',
-    genres: ['Action', 'Crime'],
-    duration: '2h 56m',
-    year: '2022',
-    rating: 4,
-    backgroundUrl: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?auto=format&fit=crop&w=2560&q=80',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: '4',
-    title: 'Interstellar',
-    genres: ['Sci-Fi', 'Drama'],
-    duration: '2h 49m',
-    year: '2014',
-    rating: 5,
-    backgroundUrl: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=2560&q=80',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=400&q=80',
-  },
-  {
-    id: '5',
-    title: 'John Wick',
-    genres: ['Action', 'Thriller'],
-    duration: '1h 41m',
-    year: '2014',
-    rating: 4,
-    backgroundUrl: 'https://images.unsplash.com/photo-1573053986275-840ffc7cc685?auto=format&fit=crop&w=2560&q=80',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1573053986275-840ffc7cc685?auto=format&fit=crop&w=400&q=80',
-  }
-];
+import { fetchContentByCategory } from '../api/contentApi';
 
 interface ImmersiveViewProps {
-  navigateToAuth?: (isLogin: boolean) => void;
-  navigateToSearch?: () => void;
   navigateToWatch?: (movie: Movie) => void;
   authed?: boolean;
   onSignOut?: () => void;
 }
 
-export function ImmersiveView({ navigateToAuth, navigateToSearch, navigateToWatch, authed, onSignOut }: ImmersiveViewProps) {
-  const [activeMovie, setActiveMovie] = useState(movies[0]);
+export function ImmersiveView({ navigateToWatch, authed, onSignOut }: ImmersiveViewProps) {
+  const navigate = useNavigate();
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [activeMovie, setActiveMovie] = useState<Movie | null>(null);
   const user = authed ? getCurrentUser() : null;
+
+  useEffect(() => {
+    fetchContentByCategory('HERO').then((results) => {
+      setMovies(results);
+      setActiveMovie((prev) => prev ?? results[0] ?? null);
+    }).catch(() => {});
+  }, []);
+
+  if (!activeMovie) {
+    return <div className="w-full h-full rounded-3xl md:rounded-[2.5rem] overflow-hidden bg-black" />;
+  }
 
   return (
     <div className="relative w-full h-full rounded-3xl md:rounded-[2.5rem] overflow-hidden flex flex-col transition-all duration-700 bg-black">
@@ -96,7 +56,7 @@ export function ImmersiveView({ navigateToAuth, navigateToSearch, navigateToWatc
           </div>
           
           <div className="flex items-center gap-3 sm:gap-4 md:gap-6 mt-1 sm:mt-0">
-            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-white cursor-pointer hover:text-zinc-300 transition drop-shadow-md" onClick={() => navigateToSearch?.()} />
+            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-white cursor-pointer hover:text-zinc-300 transition drop-shadow-md" onClick={() => navigate('/search')} />
             <button className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition text-white relative shrink-0 backdrop-blur-md shadow-lg border border-white/5">
               <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
               <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-red-600 border border-[#2a2a2a]" />
@@ -119,10 +79,10 @@ export function ImmersiveView({ navigateToAuth, navigateToSearch, navigateToWatc
               </div>
             ) : (
               <div className="flex items-center gap-2 shrink-0">
-                <button onClick={() => navigateToAuth?.(true)} className="text-xs sm:text-sm font-medium text-white hover:text-zinc-300 transition px-2 sm:px-3 py-2 hidden sm:block drop-shadow-md">
+                <button onClick={() => navigate('/login')} className="text-xs sm:text-sm font-medium text-white hover:text-zinc-300 transition px-2 sm:px-3 py-2 hidden sm:block drop-shadow-md">
                   Log In
                 </button>
-                <button onClick={() => navigateToAuth?.(false)} className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium px-4 sm:px-5 py-1.5 sm:py-2 rounded-full transition shadow-lg shadow-red-600/30">
+                <button onClick={() => navigate('/signup')} className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium px-4 sm:px-5 py-1.5 sm:py-2 rounded-full transition shadow-lg shadow-red-600/30">
                   Sign Up
                 </button>
               </div>
@@ -142,9 +102,9 @@ export function ImmersiveView({ navigateToAuth, navigateToSearch, navigateToWatc
               {activeMovie.title}
             </h2>
             <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm lg:text-base text-zinc-300 mb-6 sm:mb-8 font-medium drop-shadow-md">
-              <span>{activeMovie.genres.join(' • ')}</span>
-              <span>{activeMovie.year}</span>
-              <span>{activeMovie.duration}</span>
+              {activeMovie.genres && activeMovie.genres.length > 0 && <span>{activeMovie.genres.join(' • ')}</span>}
+              {activeMovie.year && <span>{activeMovie.year}</span>}
+              {activeMovie.duration && <span>{activeMovie.duration}</span>}
             </div>
             
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
@@ -164,7 +124,7 @@ export function ImmersiveView({ navigateToAuth, navigateToSearch, navigateToWatc
             
             <div className="flex items-center gap-1 drop-shadow-md hidden sm:flex">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className={`w-4 h-4 sm:w-5 sm:h-5 ${star <= activeMovie.rating ? 'text-red-500 fill-red-500' : 'text-zinc-500 fill-zinc-500'}`} />
+                <Star key={star} className={`w-4 h-4 sm:w-5 sm:h-5 ${star <= (activeMovie.rating ?? 0) ? 'text-red-500 fill-red-500' : 'text-zinc-500 fill-zinc-500'}`} />
               ))}
             </div>
           </div>

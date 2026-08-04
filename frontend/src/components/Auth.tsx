@@ -1,16 +1,19 @@
 import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { popcornMania, continueWatching, newTrailers } from '../data';
 import { login, signup, saveSession } from '../api/authApi';
 import { getErrorMessage } from '../api/errorMessage';
 
 interface AuthPageProps {
-  isLogin: boolean;
-  setIsLogin: (isLogin: boolean) => void;
   onAuthSuccess?: () => void;
 }
 
-export function AuthPage({ isLogin, setIsLogin, onAuthSuccess }: AuthPageProps) {
+export function AuthPage({ onAuthSuccess }: AuthPageProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isLogin = location.pathname !== '/signup';
+
   // Combine some movies for the background grid (purely decorative collage)
   const backgroundMovies = [...popcornMania, ...continueWatching, ...newTrailers, ...popcornMania, ...continueWatching, ...newTrailers];
 
@@ -135,8 +138,8 @@ export function AuthPage({ isLogin, setIsLogin, onAuthSuccess }: AuthPageProps) 
 
         <p className="text-zinc-400 text-xs sm:text-sm mb-4">
           {isLogin ? "New to Netflix? " : "Already have an account? "}
-          <button 
-            onClick={() => setIsLogin(!isLogin)} 
+          <button
+            onClick={() => navigate(isLogin ? '/signup' : '/login')}
             className="text-white hover:underline font-medium transition"
           >
             {isLogin ? 'Sign Up now' : 'Sign In now'}
