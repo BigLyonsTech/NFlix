@@ -58,6 +58,10 @@ export default function App() {
   };
 
   const navigateToWatch = (movie: Movie) => {
+    if (!authed) {
+      navigateToAuth(true);
+      return;
+    }
     setActiveMovieToWatch(movie);
     setActiveTab('watch');
   };

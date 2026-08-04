@@ -9,7 +9,7 @@ interface WatchPanelProps {
   onBack: () => void;
 }
 
-const FALLBACK_VIDEO_URL = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
+const FALLBACK_VIDEO_URL = 'https://archive.org/download/BigBuckBunny_328/BigBuckBunny_512kb.mp4';
 const PLAYBACK_SPEEDS = [0.5, 1, 1.25, 1.5, 2];
 const PROGRESS_SAVE_INTERVAL_MS = 5000;
 
@@ -176,7 +176,6 @@ export function WatchPanel({ movie, authed, onBack }: WatchPanelProps) {
         key={movie?.id ?? videoSrc}
         src={videoSrc}
         poster={movie?.thumbnailUrl}
-        loop
         className="w-full h-full object-contain bg-black"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
