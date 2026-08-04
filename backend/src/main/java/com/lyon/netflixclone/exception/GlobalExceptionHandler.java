@@ -1,8 +1,10 @@
 package com.lyon.netflixclone.exception;
 
 import com.lyon.netflixclone.dto.MiscDtos.ApiError;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -40,9 +43,27 @@ public class GlobalExceptionHandler {
                 .body(new ApiError(message, 400));
     }
 
+    // Covers bad enum values, e.g. an invalid ?category= query param.
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex) {
+        log.debug("Bad request: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiError("Invalid request parameters.", 400));
+    }
+
+    // Malformed/unparseable JSON request bodies.
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleUnreadable(HttpMessageNotReadableException ex) {
+        log.debug("Malformed request body: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiError("Malformed request body.", 400));
+    }
+
+    // Catch-all: log full details server-side, but never leak exception internals to the client.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
+        log.error("Unhandled exception", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiError("Something went wrong: " + ex.getMessage(), 500));
+                .body(new ApiError("An unexpected error occurred. Please try again later.", 500));
     }
 }

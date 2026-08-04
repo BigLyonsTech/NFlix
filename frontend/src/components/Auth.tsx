@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { popcornMania, continueWatching, newTrailers } from '../data';
 import { login, signup, saveSession } from '../api/authApi';
+import { getErrorMessage } from '../api/errorMessage';
 
 interface AuthPageProps {
   isLogin: boolean;
@@ -36,9 +37,8 @@ export function AuthPage({ isLogin, setIsLogin, onAuthSuccess }: AuthPageProps) 
 
       saveSession(auth);
       onAuthSuccess?.();
-    } catch (err: any) {
-      const message = err?.response?.data?.message || 'Something went wrong. Please try again.';
-      setError(message);
+    } catch (err) {
+      setError(getErrorMessage(err, 'Something went wrong. Please try again.'));
     } finally {
       setIsSubmitting(false);
     }

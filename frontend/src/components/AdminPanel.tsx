@@ -3,6 +3,7 @@ import { ArrowLeft, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { Movie } from '../types';
 import { fetchContent } from '../api/contentApi';
 import { createContent, deleteContent, updateContent, ContentPayload } from '../api/adminApi';
+import { getErrorMessage } from '../api/errorMessage';
 
 interface AdminPanelProps {
   onBack: () => void;
@@ -38,7 +39,7 @@ export function AdminPanel({ onBack }: AdminPanelProps) {
     setIsLoading(true);
     fetchContent()
       .then(setItems)
-      .catch(() => setError('Failed to load catalog. Are you logged in as an admin?'))
+      .catch((err) => setError(getErrorMessage(err, 'Failed to load catalog. Are you logged in as an admin?')))
       .finally(() => setIsLoading(false));
   };
 
@@ -91,8 +92,8 @@ export function AdminPanel({ onBack }: AdminPanelProps) {
       }
       setIsFormOpen(false);
       load();
-    } catch (err: any) {
-      setError(err?.response?.data?.message || 'Failed to save. Make sure all required fields are filled.');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to save. Make sure all required fields are filled.'));
     } finally {
       setIsSaving(false);
     }
@@ -103,8 +104,8 @@ export function AdminPanel({ onBack }: AdminPanelProps) {
     try {
       await deleteContent(id);
       load();
-    } catch {
-      setError('Failed to delete title.');
+    } catch (err) {
+      setError(getErrorMessage(err, 'Failed to delete title.'));
     }
   };
 

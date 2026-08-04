@@ -21,7 +21,7 @@ netflix-clone/
 Backend (from `backend/`):
 ```
 mvn -q -DskipTests compile   # fast compile check
-mvn test                      # full test suite (27 tests, all pass)
+mvn test                      # full test suite (28 tests, all pass)
 mvn spring-boot:run           # run locally, needs Mongo on localhost:27017 or $MONGODB_URI
 mvn package                   # produces target/netflix-clone-*.jar; java -jar it to run
 ```

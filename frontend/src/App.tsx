@@ -29,11 +29,13 @@ export default function App() {
   const [continueWatching, setContinueWatching] = useState<Movie[]>([]);
   const [authed, setAuthed] = useState(isAuthenticated());
   const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null);
+  const [homeDataError, setHomeDataError] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
   const loadHomeData = () => {
-    fetchContentByCategory('HERO').then(setHeroMovies).catch(() => {});
-    fetchContentByCategory('POPCORN_MANIA').then(setPopcornMania).catch(() => {});
+    setHomeDataError(false);
+    fetchContentByCategory('HERO').then(setHeroMovies).catch(() => setHomeDataError(true));
+    fetchContentByCategory('POPCORN_MANIA').then(setPopcornMania).catch(() => setHomeDataError(true));
 
     if (isAuthenticated()) {
       fetchContinueWatching().then(setContinueWatching).catch(() => {});
@@ -140,6 +142,14 @@ export default function App() {
                 {/* Main Content */}
                 <div className="flex-1 flex flex-col p-3 sm:p-6 md:p-8 overflow-y-auto scrollbar-hide">
                   <TopBar navigateToAuth={navigateToAuth} navigateToSearch={navigateToSearch} authed={authed} onSignOut={handleSignOut} />
+                  {homeDataError && (
+                    <div className="mb-4 sm:mb-6 shrink-0 bg-red-500/10 border border-red-500/30 text-red-400 text-xs sm:text-sm rounded-lg px-4 py-3 flex items-center justify-between gap-4">
+                      <span>Couldn't load the catalog. The server may be unreachable.</span>
+                      <button onClick={loadHomeData} className="shrink-0 bg-red-600 hover:bg-red-700 transition text-white font-bold px-4 py-1.5 rounded-full text-xs">
+                        Retry
+                      </button>
+                    </div>
+                  )}
                   <Hero navigateToWatch={navigateToWatch} movies={heroMovies} />
                   {authed && <RecommendedRow navigateToWatch={navigateToWatch} />}
                   <PopcornManiaRow title="Popcorn Mania" movies={popcornMania} navigateToWatch={navigateToWatch} />
