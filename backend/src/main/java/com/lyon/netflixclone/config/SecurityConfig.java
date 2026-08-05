@@ -59,7 +59,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(allowedOrigins.split(",")));
+        // Origin *patterns* (not setAllowedOrigins) so a wildcard entry like
+        // https://nflixbox-*.vercel.app can match Vercel's per-deploy preview
+        // URLs without editing this env var on every preview deploy. Still
+        // compatible with allowCredentials(true), unlike a bare "*" origin.
+        configuration.setAllowedOriginPatterns(List.of(allowedOrigins.split(",")));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
