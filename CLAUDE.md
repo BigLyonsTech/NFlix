@@ -30,6 +30,7 @@ Frontend (from `frontend/`):
 ```
 npm install
 npm run lint     # tsc --noEmit — there is no eslint config, this IS the lint script
+npm run test     # vitest run — component/unit tests, see Frontend architecture below
 npm run build    # vite build -> dist/
 npm run dev      # vite dev server on :3000
 ```
@@ -143,10 +144,25 @@ values accordingly.
 
 ## Frontend architecture
 
-- No router — `App.tsx` holds `activeTab` state (`home | search | watch | auth |
-  admin | immersive`) and switch-renders panels inside `AnimatePresence`
-  (`motion/react`, i.e. Framer Motion's new package name). There's no URL/history
-  integration, so tab state doesn't survive a refresh.
+- Real client-side routing via `react-router-dom` (`App.tsx` holds `<Routes>`:
+  `/`, `/search`, `/watch/:id`, `/login`, `/signup`, `/admin`, `/immersive`),
+  panels transition inside `AnimatePresence mode="wait"` keyed on
+  `location.pathname` (`motion/react`, i.e. Framer Motion's new package name).
+  This replaced an earlier `activeTab`-state/no-router version — if you see
+  old docs or comments mentioning "activeTab", they're stale.
+- Frontend tests use Vitest + React Testing Library (`npm run test`, wired
+  into CI). Config lives in `vite.config.ts`'s `test` block; setup file is
+  `src/setupTests.ts`. **Gotcha:** Node 22+'s own experimental global
+  `localStorage` (behind `--localstorage-file`, unrelated to jsdom) collides
+  with jsdom's in the `jsdom` test environment — jsdom sees a `localStorage`
+  already on `globalThis` and skips installing a working implementation, so
+  both `window.localStorage` and the bare global end up `undefined` and every
+  `localStorage.clear()` in a test throws. Fixed with a minimal in-memory
+  `Storage` polyfill in `setupTests.ts` (deliberately not a
+  `--no-experimental-webstorage` Node flag — that flag isn't guaranteed to
+  exist on every Node version this runs on, and an unrecognized flag crashes
+  the process instead of just failing tests). Don't remove the polyfill
+  thinking it's redundant with jsdom.
 - `api/client.ts` is a single Axios instance: attaches the JWT from
   `localStorage['netflix_clone_token']` on every request, and on a 401 response
   clears that + the stored user. Each `api/*Api.ts` file wraps one backend
