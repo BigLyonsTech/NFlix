@@ -69,14 +69,17 @@ public class DataSeeder implements CommandLineRunner {
 
                 Content.builder().title("Peaky Blinders").year("2013").seasons("6 Seasons").ageRating("A")
                         .thumbnailUrl("https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=1200&q=80")
+                        .backgroundUrl("https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=1920&q=80")
                         .videoUrl(VIDEO_ELEPHANTS_DREAM)
                         .category(ContentCategory.HERO).genres(List.of("Crime", "Drama")).rating(5).build(),
                 Content.builder().title("Stranger Things").year("2016").seasons("4 Seasons").ageRating("U/A")
                         .thumbnailUrl("https://images.unsplash.com/photo-1614145266184-a1599a0edb88?auto=format&fit=crop&w=1200&q=80")
+                        .backgroundUrl("https://images.unsplash.com/photo-1614145266184-a1599a0edb88?auto=format&fit=crop&w=1920&q=80")
                         .videoUrl(VIDEO_SINTEL)
                         .category(ContentCategory.HERO).genres(List.of("Sci-Fi", "Horror")).rating(5).build(),
                 Content.builder().title("Breaking Bad").year("2008").seasons("5 Seasons").ageRating("A")
                         .thumbnailUrl("https://images.unsplash.com/photo-1574347710313-8b7466eb4b12?auto=format&fit=crop&w=1200&q=80")
+                        .backgroundUrl("https://images.unsplash.com/photo-1574347710313-8b7466eb4b12?auto=format&fit=crop&w=1920&q=80")
                         .videoUrl(VIDEO_BIG_BUCK_BUNNY)
                         .category(ContentCategory.HERO).genres(List.of("Crime", "Drama")).rating(5).build()
         );

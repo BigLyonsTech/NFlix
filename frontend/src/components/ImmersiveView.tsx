@@ -36,7 +36,7 @@ export function ImmersiveView({ navigateToWatch, authed, onSignOut }: ImmersiveV
           key={movie.id}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${activeMovie.id === movie.id ? 'opacity-100 z-0' : 'opacity-0 -z-10'}`}
         >
-          <img src={movie.backgroundUrl} alt={movie.title} className="w-full h-full object-cover" />
+          <img src={movie.backgroundUrl || movie.thumbnailUrl} alt={movie.title} className="w-full h-full object-cover" />
           {/* Gradients for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent" />
